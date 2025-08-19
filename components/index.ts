@@ -182,4 +182,6 @@ export type { SplitterProps } from './splitter';
 
 export { default as Test } from './Test';
 export type { TestProps } from './Test';
+export { default as Metro } from './Metro';
+export type { MetroProps } from './Metro';
 export { unstableSetRender } from './config-provider/UnstableContext';
