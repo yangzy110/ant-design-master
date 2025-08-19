@@ -178,10 +178,15 @@ export type { WatermarkProps } from './watermark';
 export { default as Splitter } from './splitter';
 export type { SplitterProps } from './splitter';
 
-// TODO: Remove in v6
+//自定义
 
 export { default as Test } from './Test';
 export type { TestProps } from './Test';
 export { default as Metro } from './Metro';
 export type { MetroProps } from './Metro';
+export { default as PortalLayout } from './portalLayout';
+export type { PortalLayoutProps } from './portalLayout';
+
+// TODO: Remove in v6
+
 export { unstableSetRender } from './config-provider/UnstableContext';
