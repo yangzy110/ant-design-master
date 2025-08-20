@@ -17,8 +17,8 @@ A flexible layout framework for portal applications, supporting single-column, d
 
 <!-- prettier-ignore -->
 <code src="./demo/basic.tsx">Basic Usage</code>
-<code src="./demo/stoneText.tsx">Two Column</code>
-<code src="./demo/three-column.tsx">Three Column</code>
+<code src="./demo/stoneTest.tsx">Two Column</code>
+<code src="./demo/treeTest.tsx">Three Column</code>
 
 ## API
 
