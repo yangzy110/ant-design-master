@@ -1,10 +1,17 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { ResizableBox, ResizeCallbackData } from 'react-resizable';
+import useStyle from './style/StoneLayout';
+
 import { Layout, theme } from 'antd';
-// import { DragOutlined } from '@ant-design/icons';
+
+import { createFromIconfontCN } from '@ant-design/icons';
 
 const { Sider, Content } = Layout;
 const { useToken } = theme;
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/c/font_1168848_e4suvyrbjro.js',
+});
 
 export interface PortalLayoutProps {
   className?: string;
@@ -27,11 +34,12 @@ const LAYOUT_CONFIG = {
 
 const PortalLayout: React.FC<PortalLayoutProps> = ({
   className,
-  headerTheme = 'default',
+  // headerTheme = 'default',
   children,
   siderContent,
 }) => {
   const { token } = useToken();
+  const { styles } = useStyle();
   const [siderWidth, setSiderWidth] = useState<number>(LAYOUT_CONFIG.MIN_SIDER_WIDTH);
   const [isResizing, setIsResizing] = useState<boolean>(false);
 
@@ -51,97 +59,36 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({
     setIsResizing(false);
   }, []);
 
-  const getStyles = useCallback(() => {
-    const headerThemes = {
-      default: `linear-gradient(90deg, ${token.colorPrimary} 0%, ${token.blue4} 64%, ${token.blue4} 96%)`,
-      dark: `linear-gradient(90deg, ${token.colorBgContainer} 0%, ${token.blue9} 100%)`,
-      cyan: `linear-gradient(90deg, ${token.cyan6} 0%, ${token.cyan5} 100%)`,
-    };
-
-    return {
-      container: {
-        display: 'flex',
-        flexDirection: 'column' as const,
-        minWidth: 1200,
-        height: '100vh',
-        minHeight: 480,
-        overflow: 'auto' as const,
-      },
-      header: {
-        position: 'relative' as const,
-        zIndex: token.zIndexPopupBase,
-        width: '100%',
-        height: LAYOUT_CONFIG.HEADER_HEIGHT,
-        background: headerThemes[headerTheme],
-        boxShadow: token.boxShadow,
-      },
-      main: {
-        position: 'relative' as const,
-        height: `calc(100% - ${LAYOUT_CONFIG.HEADER_HEIGHT}px)`,
-      },
-      sider: {
-        zIndex: token.zIndexBase,
-        boxShadow: token.boxShadow,
-      },
-      content: {
-        padding: token.paddingXS,
-      },
-      mask: {
-        position: 'absolute' as const,
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'transparent',
-        userSelect: 'none' as const,
-      },
-      resizeBox: {
-        position: 'absolute' as const,
-        top: 0,
-        zIndex: token.zIndexBase,
-        width: 2,
-        height: '100%',
-        borderLeft: `2px solid ${isResizing ? `${token.colorPrimary}73` : 'transparent'}`,
-        left: siderWidth - 2,
-      },
-      handle: {
-        position: 'absolute' as const,
-        top: 'calc(40% - 24px)',
-        left: siderWidth - 2,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 12,
-        height: 48,
-        color: isResizing ? token.colorText : token.colorTextSecondary,
-        fontSize: token.fontSizeXL,
-        backgroundColor: isResizing ? `${token.colorPrimary}99` : token.colorBgContainer,
-        borderRadius: `0 ${token.borderRadius}px ${token.borderRadius}px 0`,
-        boxShadow: token.boxShadow,
-        cursor: 'ew-resize',
-        transition: `all ${token.motionDurationMid}`,
-      },
-    };
-  }, [token, headerTheme, isResizing, siderWidth]);
-
-  const styles = getStyles();
-
   const renderResizeHandle = useCallback(
     (handleAxis: string, ref: React.Ref<HTMLDivElement>) => (
-      <div ref={ref} style={styles.handle}>
-        {/* <DragOutlined /> */}
+      <div
+        ref={ref}
+        className={styles.handle}
+        style={{
+          left: siderWidth - 2,
+          color: isResizing ? token.colorText : token.colorTextSecondary,
+          backgroundColor: isResizing ? `${token.colorPrimary}99` : token.colorBgContainer,
+        }}
+      >
+        <IconFont
+          type="suid-font-drag-vertical"
+          style={{
+            fontSize: '22px',
+            color: isResizing ? '#fff' : 'inherit',
+          }}
+        />
       </div>
     ),
-    [styles.handle],
+    [styles.handle, siderWidth, isResizing, token],
   );
 
   return (
-    <section style={styles.container} className={className}>
-      <header style={styles.header}>{/* Header content */}</header>
+    <section className={`${styles.container} ${className}`}>
+      <header className={styles.header}>{/* Header content */}</header>
 
-      <Layout style={styles.main}>
+      <Layout className={styles.main}>
         <Sider
-          style={styles.sider}
+          className={styles.sider}
           collapsedWidth={LAYOUT_CONFIG.COLLAPSED_WIDTH}
           collapsible
           trigger={null}
@@ -164,10 +111,10 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({
           </ResizableBox>
         </Sider>
 
-        <Content style={styles.content}>
+        <Content className={styles.content}>
           {isResizing && (
-            <div style={styles.mask}>
-              <div style={styles.resizeBox} />
+            <div className={styles.mask}>
+              <div className={styles.resizeBox} style={{ left: siderWidth - 2 }} />
             </div>
           )}
           {children}

@@ -2,16 +2,20 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Layout, theme } from 'antd';
 import { ResizableBox } from 'react-resizable';
 import classNames from 'classnames';
-// import { DragOutlined } from '@ant-design/icons';
-import { createStyles } from 'antd-style';
+import { createFromIconfontCN } from '@ant-design/icons';
+import useStyle from './style/BasicLayout';
 
 const { Sider, Content } = Layout;
+
+const IconFont = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/c/font_1168848_e4suvyrbjro.js',
+});
 
 const ORIGIN_BOX_WIDTH = 232;
 const MIN_WIDTH = 232;
 const MAX_WIDTH = 420;
 const COLLAPSED_WIDTH = 50;
-const HEADER_HEIGHT = 56;
+// const HEADER_HEIGHT = 56;
 
 interface ResizeData {
   size: {
@@ -37,94 +41,6 @@ interface BasicLayoutProps {
   maxSiderWidth?: number;
 }
 
-const useStyles = createStyles(({ token, css }) => ({
-  portalLayout: css`
-    display: flex;
-    flex-direction: row;
-    min-width: 1200px;
-    height: 100vh;
-    min-height: 480px;
-    overflow: auto;
-    background-color: ${token.colorBgContainer};
-  `,
-
-  layoutCenter: css`
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-  `,
-
-  sider: css`
-    z-index: 1;
-    height: 100%;
-    box-shadow: ${token.boxShadowSecondary};
-    
-    .react-resizable {
-      height: 100%;
-    }
-  `,
-
-  handleBtn: css`
-    position: absolute;
-    top: calc(40% - 24px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 12px;
-    height: 48px;
-    color: ${token.colorTextTertiary};
-    font-size: 22px;
-    background-color: ${token.colorBgContainer};
-    border-radius: 0 ${token.borderRadiusSM}px ${token.borderRadiusSM}px 0;
-    box-shadow: ${token.boxShadowTertiary};
-    cursor: ew-resize;
-    transition: all ${token.motionDurationSlow};
-    
-    &.resizing {
-      color: ${token.colorPrimary};
-      background-color: ${token.colorPrimaryBg};
-    }
-  `,
-
-  mainContent: css`
-    height: 100%;
-    padding: 0;
-  `,
-
-  layoutCenterHeader: css`
-    height: ${HEADER_HEIGHT}px;
-    background-color: ${token.colorBgContainer};
-    border-bottom: 1px solid ${token.colorBorderSecondary};
-    display: flex;
-    align-items: center;
-    padding: 0 ${token.padding}px;
-  `,
-
-  mask: css`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    user-select: none;
-    z-index: 999;
-  `,
-
-  resizeBox: css`
-    position: absolute;
-    top: 0;
-    z-index: 1;
-    width: 2px;
-    height: 100%;
-    border-left: 2px solid transparent;
-    
-    &.resizing {
-      border-left-color: ${token.colorPrimary};
-    }
-  `,
-}));
-
 const BasicLayout: React.FC<BasicLayoutProps> = ({
   siderContent,
   headerContent,
@@ -134,7 +50,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = ({
   minSiderWidth = MIN_WIDTH,
   maxSiderWidth = MAX_WIDTH,
 }) => {
-  const { styles } = useStyles();
+  const { styles } = useStyle();
   const { token } = theme.useToken();
 
   const [boxWidth, setBoxWidth] = useState<number>(defaultSiderWidth);
@@ -159,13 +75,23 @@ const BasicLayout: React.FC<BasicLayoutProps> = ({
     (handleAxis: string, ref: React.Ref<HTMLDivElement>) => (
       <div
         ref={ref}
-        style={{ left: boxWidth - 2 }}
-        className={classNames(styles.handleBtn, { resizing })}
+        className={styles.handleBtn}
+        style={{
+          left: boxWidth - 2,
+          color: resizing ? token.colorText : token.colorTextSecondary,
+          backgroundColor: resizing ? `${token.colorPrimary}99` : token.colorBgContainer,
+        }}
       >
-        {/* <DragOutlined /> */}
+        <IconFont
+          type="suid-font-drag-vertical"
+          style={{
+            fontSize: '22px',
+            color: resizing ? '#fff' : 'inherit',
+          }}
+        />
       </div>
     ),
-    [boxWidth, resizing, styles.handleBtn],
+    [styles.handleBtn, boxWidth, resizing, token],
   );
 
   return (
@@ -193,7 +119,9 @@ const BasicLayout: React.FC<BasicLayoutProps> = ({
             handle={renderResizeHandle}
           >
             {/* Sidebar content */}
-            <div style={{ padding: token.padding }}>{siderContent || '侧边栏内容'}</div>
+            <div style={{ padding: token.padding, color: token.colorWhite }}>
+              {siderContent || '侧边栏内容'}
+            </div>
           </ResizableBox>
         </Sider>
 
